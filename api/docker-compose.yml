@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  redis:
+    restart: on-failure
+    image: redis:latest
+    container_name: redis
+    ports:
+      - '6379:6379'
+
+  api:
+    container_name: api_application
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    image: neuralume/api/app:dev
+    volumes:
+      - ./api:/opt/neuralume/app
+    ports:
+      - "8000:8000"
+    links:
+      - redis
+    depends_on:
+      - celery
+
+  celery:
+    container_name: celery
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    command: celery -A api worker -B --loglevel=DEBUG
+    volumes:
+      - ./api:/opt/neuralume/app
+    links:
+      - redis

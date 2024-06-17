@@ -1,0 +1,13 @@
+[Unit]
+Description=LumeOS Service
+After=network.target remote-fs.target nss-lookup.target httpd-init.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=lume start
+#ExecStop
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+#!/bin/bash
+cd /opt/neuralume/app &&
+sh ./scripts/freeze-reqs &&
+sh ./scripts/collect-static &&
+sh ./scripts/clear-bytecode &&
+docker-compose -f docker-compose-prod.yml up --detach --build

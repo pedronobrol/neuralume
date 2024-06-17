@@ -1,0 +1,2 @@
+#!/bin/bash
+cd api && pipenv install && pipenv run pip freeze > requirements.txt

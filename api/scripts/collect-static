@@ -1,0 +1,2 @@
+#!/bin/bash
+cd api; pipenv shell "python manage.py collectstatic --no-input; exit"

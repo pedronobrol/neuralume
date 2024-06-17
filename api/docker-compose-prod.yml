@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+    api:
+        container_name: api_application
+        restart: always
+        build:
+            context: .
+            dockerfile: ./docker/api/Dockerfile
+        image: neuralume/api/app:prod
+        environment:
+            - API_PRODUCTION_MODE=1
+        volumes:
+            - ./api:/opt/neuralume/app
+        expose:
+            - 8000
+        depends_on:
+            - celery
+
+    celery:
+        container_name: celery
+        restart: always
+        environment:
+            - API_PRODUCTION_MODE=1
+        build:
+            context: .
+            dockerfile: ./docker/api/Dockerfile
+        command: celery -A api worker -B --loglevel=DEBUG
+        volumes:
+            - ./api:/opt/neuralume/app
+
+    server:
+        container_name: nginx_server
+        restart: always
+        build:
+            context: ./docker/nginx
+            dockerfile: Dockerfile
+        image: neuralume/api/nginx_server:prod
+        ports:
+            - 80:80
+        volumes:
+            - ./api/static:/opt/neuralume/app/static
+        depends_on:
+            - api

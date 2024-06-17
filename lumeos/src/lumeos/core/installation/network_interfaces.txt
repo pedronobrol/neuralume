@@ -1,0 +1,2 @@
+iface configuration inet dhcp
+iface client inet dhcp

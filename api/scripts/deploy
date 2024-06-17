@@ -1,0 +1,3 @@
+#!/bin/bash
+scp -r ~/neuralume/neuralume/api/* root@178.128.171.9:/opt/neuralume/app &&
+ssh root@178.128.171.9 "/opt/neuralume/app/scripts/run-prod"

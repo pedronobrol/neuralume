@@ -1,0 +1,2 @@
+#!/bin/bash
+find /opt/neuralume/app -name '*.pyc' -delete

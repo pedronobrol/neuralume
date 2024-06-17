@@ -1,0 +1,4 @@
+#!/bin/bash
+sh ./scripts/freeze-reqs &&
+sh ./scripts/collect-static &&
+docker-compose -f docker-compose.yml up --build

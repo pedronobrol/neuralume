@@ -1,0 +1,116 @@
+scalar Date
+scalar DateTime
+
+interface BaseModel {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type User implements BaseModel {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    email: String!
+    profile: UserProfile
+}
+
+type UserProfile implements BaseModel {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    firstName: String!
+    lastName: String!
+    organisationName: String!
+    legalName: String
+    boards: [Board!]!
+}
+
+enum BoardModel {
+    N100
+    N200
+}
+
+type Board implements BaseModel {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    deviceModel: BoardModel!
+    postInterval: Int!
+    sampleInterval: Int!
+    isEnabled: Boolean!
+    label: String!
+    serialNumber: String!
+    owner: UserProfile!
+    width: Float!
+    height: Float!
+    length: Float!
+    occupation: Int!
+    currentAverage(magnitude: Magnitude!): Float
+    lastWeekAverage(magnitude: Magnitude!): Float
+    historicData(
+        magnitude: Magnitude!
+        numPoints: Int!
+        timeInterval: Int!
+    ): [DataPoint!]
+}
+
+type DataPoint {
+    data: Float!
+    measuredAt: DateTime!
+}
+
+enum Magnitude {
+    T # Temperature (K)
+    CO2 # Carbon Dioxide Concentration (ppm)
+    CO # Carbon Monoxide Concentration (ppm)
+    VOC # Volatile Organic Compounds Concentration (ppb)
+    P # Pressure (Pa)
+    RH # Relative Humidity (%)
+    R0 # Transmission rate
+}
+
+type BoardMeasurement implements BaseModel {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    magnitude: Magnitude!
+    board: Board!
+    data: Float!
+}
+
+type VerifyTokenResponse {
+    isValid: Boolean!
+    email: String
+}
+
+type AuthToken {
+    token: String!
+    refreshToken: String!
+}
+
+type RequestTokenResponse {
+    success: Boolean!
+    errorMessage: String
+    authToken: AuthToken
+}
+
+type NoPayloadMutationResponse {
+    success: Boolean!
+    errorMessage: String
+}
+
+directive @requiresBoardAgent on FIELD_DEFINITION
+directive @requiresHumanUser on FIELD_DEFINITION
+
+type Query {
+    myUser: User
+    board(id: ID!): Board
+}
+
+type Mutation {
+    verifyToken(token: String!): VerifyTokenResponse!
+    refreshToken(refreshToken: String!): RequestTokenResponse!
+    revokeToken(refreshToken: String!): NoPayloadMutationResponse!
+    requestToken(email: String!, password: String!): RequestTokenResponse!
+}
